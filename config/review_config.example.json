@@ -1,0 +1,23 @@
+{
+  "data_root": "C:\\PATH_TO_MT5_COMMON_FILES\\XAU_V3109_C33_TF1\\BROKER_SERVER\\Account_ACCOUNT_ID\\XAUUSD.s_M5",
+  "four_hour_data_root": "C:\\PATH_TO_MT5_COMMON_FILES\\XAU_V3109_C33_TF1\\BROKER_SERVER\\Account_ACCOUNT_ID\\XAUUSD.s_M5",
+  "four_hour_review_enabled": true,
+  "four_hour_lark_notify_enabled": false,
+  "four_hour_pro_enabled": true,
+  "four_hour_prompt_file": "four_hour_review_prompt.txt",
+  "server_beijing_offset_hours": 5,
+  "model": "deepseek-flash",
+  "daily_review_model": "deepseek-v4-pro",
+  "api_key_environment": "DEEPSEEK_API_KEY",
+  "api_key_file": "Config/deepseek_api_key.txt",
+  "trade_commentary_enabled": true,
+  "trade_commentary_prompt_file": "trade_commentary_prompt.txt",
+  "parallel_ai_enabled": false,
+  "parallel_ai_trade_enabled": false,
+  "parallel_ai_lark_webhook": "",
+  "expected_mt5_login": "",
+  "lark_daily_notify_enabled": false,
+  "lark_webhook_environment": "LARK_WEBHOOK_URL",
+  "lark_webhook_file": "Config/lark_webhook.txt",
+  "lark_outbox_enabled": false
+}

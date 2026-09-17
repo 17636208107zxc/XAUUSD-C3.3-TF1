@@ -1,0 +1,39 @@
+# MT5 build outputs and local presets
+*.ex4
+*.ex5
+
+# Review .set/.ini/.json files individually; do not blanket-ignore presets.
+
+# Secrets and machine-specific runtime configuration
+.env
+.env.*
+!.env.example
+config/review_config.json
+config/review_config_v3109.json
+config/deepseek_api_key.txt
+config/lark_webhook.txt
+**/deepseek_api_key.txt
+**/lark_webhook.txt
+
+# Runtime data, trade records, logs and backups
+*.log
+*.bak
+*.tmp
+*.zip
+*.rar
+*.7z
+Raw_Data/
+Trade_Lifecycle/
+Lark_Outbox/
+artifacts/
+outputs/
+__pycache__/
+.pytest_cache/
+*.pyc
+.venv/
+venv/
+.idea/
+.vscode/
+Thumbs.db
+.DS_Store
+~$*
