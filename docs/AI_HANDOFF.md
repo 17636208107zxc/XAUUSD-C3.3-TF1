@@ -17,11 +17,11 @@
 1. `src/XAUUSD_M15_M5_V3_10_9_C33_TF1_TREND_FREQUENCY.mq5` 的 `#include`、`OnInit()`、`OnTick()`、`V310ProcessTick()`。
 2. `V310UpdateM15Context()`：M15 主结构、Early Trend、方向权限。
 3. M5 BUY/SELL 候选与 `V3109C32SelectLiveSlot()`、挂单提交、退出管理。
-4. 找回同版 `Include/XAUAI/V3109C33TF1/` 后，逐个检查被调用函数的具体实现；目前该目录缺失，不能对其中公式作肯定断言。
+4. 检查 `src/Include/XAUAI/V3109C33TF1/` 中实际被调用的函数及传递依赖；不要用开发工作树另一份 AI 默认参数不同的主文件替换本仓库主 EA。
 5. Python `tools/` 是独立 AI/复盘/飞书服务。区分 EA 内置 `g_ai.Review()` 与外部并行 AI 程序，不能混为一谈；实际启用状态看运行配置。
 
 当前主 EA 的规则标识为 `EA_OPEN_V3_10_9_C33_TF1_PURE_TREND_FREQUENCY_R1`，参数标识为 `M15_EARLY_TREND_M5_FREQUENCY_3SLOT_C33TF1`。不要把 C32B、C31 或 V3103 的 Include 当作同版 C33 依赖。
 
 ## 本次仓库状态
 
-目前只是本机发布准备区。由于 20 个 C33 头文件缺失，没有完成独立编译验证，也尚未证明全部策略细节。详见 [CODE_AUDIT_NOTES.md](CODE_AUDIT_NOTES.md)。
+本仓库含当前终端主 EA 和 23 个同版头文件，独立 MetaEditor 编译为 0 errors、0 warnings。编译通过不等于策略收益或实盘参数已验证；详见 [CODE_AUDIT_NOTES.md](CODE_AUDIT_NOTES.md)。

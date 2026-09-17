@@ -12,20 +12,20 @@
 | M5 路线 | 主文件调用 Original H2/L2 Attempt、Recovery Break、EMA Recovery、EMA Compression Break 的选路函数；另有独立 Compression Break 分支。H2/L2 是尝试序号，不是周期。 |
 | 挂单 | BUY、SELL 候选经风险/槽位检查和 EA AI Review 后，使用 Buy Stop / Sell Stop；默认挂单有效期输入为 `3` 根 M5。 |
 | 风险与退出 | 默认 `InpRiskPercent=0.5`；`InpUseStagedExit=true`，TP1=1R 平 50%，保本开关为 true，TP2=2R 并退出剩余仓位，默认不使用结构目标作为服务器 TP。 |
+| 槽位 | `TradeSlotPolicy.mqh` 定义最多 3 槽、同向敞口、至少 900 秒成交间隔、单槽风险硬上限 1%、总初始风险上限 1.5%；EA 默认单笔输入为 0.5%。Early Trend 仅在尚无已占槽位时允许入场。 |
 
 主 EA 包含 `InpAIMode=AI_OFF`、API Key 文件输入和 `g_ai.Review()` 调用。实际挂载图表的输入值可能覆盖默认值；不能仅凭源码默认值断言当时 DeepSeek 是否参与交易。外部 Python/并行 AI 是另一个进程，不能混同于 EA 内置审核。
 
-## 尚待同版 Include 核实
+## 已核对的结构与入场细节
 
-以下是项目要求关注的规则，但其定义或常量位于当前缺失的 `V3109C33TF1` 头文件中，**本发布区不能把它们写成已验证事实**：
+- `M15PrimaryStructure.mqh` 定义 `PRIMARY_RANGE/BULL/BEAR/TRANSITION_FROM_BULL/TRANSITION_FROM_BEAR`。RANGE 中需要有序 HH/HL 或 LL/LH、EMA 条件及提升缓冲才能建立主趋势。Promotion Buffer 为 `max(2×spread, 0.10×M15 ATR14, 2×tick)`；Break Buffer 为 `max(2×spread, 0.15×M15 ATR14, 2×tick)`。
+- 多头回调形成候选低点后，越过前主高点及 Promotion Buffer 才将该低点提升为保护低点；空头镜像处理。价格连续两根已闭合 M15 K 线收在保护结构和 Break Buffer 之外，进入对应 TRANSITION。
+- `M15EarlyTrend.mqh` 仅在 Primary 为 RANGE、方向不与宏观偏向冲突时评估早期趋势；还检查 EMA20 位置与斜率、最近四根 K 线同侧数量、保护结构和参考高低点突破。Early 只给一槽权限，不直接改写 Primary 状态。
+- M5 有原尝试/恢复突破/EMA Recovery/EMA Compression Break 路线。EMA Recovery 使用 20 根 M5 的 EMA20 周期、真实回调或反弹、EMA 方向和方向性恢复 K 线；EMA Compression Break 要求压缩区多数 K 线靠近 EMA20 后出现方向突破。路线细节以相应头文件和主 EA 调用点为准。
+- `M5TargetStructure.mqh` 只使用已确认、未被已闭合 K 线消耗的 M5/M15 枢轴作目标。`Strategy01Planner.mqh` / `Strategy01SellPlanner.mqh` 在存在有效结构目标且距离不足 2R 时拒绝；无有效结构目标时不因该门槛拒绝。
+- `M5StructureStop.mqh` 用信号前一根 M5 K 线的极值及最近确认的 M5 结构枢轴选择更外侧锚点；多单在下方、空单在上方。交易计划分别在锚点外侧再留 2 美元价格空间。
 
-- Primary Structure 的 Promotion Buffer、Break Buffer、保护结构及两根 M15 趋势失效确认公式；
-- `PRIMARY_BULL`、`PRIMARY_BEAR`、`RANGE`、`TRANSITION` 的精确转换条件；
-- Early Trend Gate 的完整判定与 Early 阶段最多一槽的实现；
-- EMA Recovery、EMA Compression Break、目标空间和结构 SL 的具体阈值/计算；
-- `V3109C32_MAX_SLOTS` 的值与总初始风险 1.5% 的常量实现。
-
-找回同版头文件后，应从 `OnTick` 逐级确认调用链，补充准确公式并以 MetaEditor 编译与回测验证。不得用旧版文件推断这些规则。
+以上是静态源码和 0 errors / 0 warnings 编译验证，不代表回测或实盘效果已经验证。
 
 ## 旧参数和兼容实现
 

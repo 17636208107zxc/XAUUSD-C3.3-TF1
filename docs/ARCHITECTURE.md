@@ -6,7 +6,7 @@
 
 ## 主 EA 直接声明的 Include
 
-主 EA 第 15–34 行直接包含 `Include/XAUAI/V3109C33TF1/` 下的 20 个文件，按名称和主文件调用点分组如下。**这只是直接引用清单；文件当前缺失，不能据此推断每个模块内部实现或传递依赖。**
+主 EA 第 15–34 行直接包含 `Include/XAUAI/V3109C33TF1/` 下的 20 个文件，按真实 Include 和调用点分组如下。同版目录共 23 个 `.mqh`，另有 `M15PrimaryStructure.mqh`、`M15PrimaryEvidence.mqh` 和 `FastExecutionAudit.mqh`。
 
 | 层 | 直接引用的文件 |
 |---|---|
@@ -16,9 +16,9 @@
 | M5 路线/计划 | `M5EMARecovery.mqh`、`M5CompressionBreak.mqh`、`M5RouteSelection.mqh`、`M5TargetStructure.mqh`、`M5StructureStop.mqh`、`Strategy01Planner.mqh`、`Strategy01SellPlanner.mqh` |
 | 方向/槽位 | `M5AsymmetricTrendPolicy.mqh`、`M5MicroCyclePolicy.mqh`、`TradeSlotPolicy.mqh` |
 
-MT5 标准库还包括 `<Trade/Trade.mqh>`。若找回头文件，应继续检查每个文件内部的 `#include`，递归完成依赖清单，不能只按上表复制。
+MT5 标准库还包括 `<Trade/Trade.mqh>`。递归检查显示 `M15TrendState.mqh` 传递引用 `M15PrimaryStructure.mqh` 和 `M15PrimaryEvidence.mqh`；其余项目内的 `#include` 均指向同版目录内现有文件。
 
-`M15PrimaryStructure.mqh` **未在主 EA 直接 Include 清单中出现**；Primary Structure 相关调用在主 EA 中存在，但具体定义可能来自上述头文件。未找回依赖前不能断言其单独文件属于 C33。
+`M15PrimaryStructure.mqh` **不在主 EA 直接 Include 清单中**，但经 `M15TrendState.mqh` 传递引用，属于当前依赖。`FastExecutionAudit.mqh` 位于同版目录，是否属于当前调用路径需按具体调用点判断，不能只凭文件存在下结论。
 
 ## 已可从主文件确认的数据流
 
@@ -34,7 +34,7 @@ OnTick → V310ProcessTick
   └─ 持仓：槽位退出与风控管理
 ```
 
-具体 Promotion Buffer、Break Buffer、保护结构、两根确认、目标空间和结构止损公式位于未取得的依赖中；本文件不擅自补写。
+关键规则可以从现有依赖核对：Primary Structure 的提升/突破缓冲分别取 `max(2×spread, 0.10×M15 ATR, 2×tick)` 与 `max(2×spread, 0.15×M15 ATR, 2×tick)`；保护结构被连续两根已闭合 M15 K 线越过后进入 TRANSITION。结构止损从信号前一根 M5 极值与最近确认枢轴取更外侧锚点，再在交易计划中留 2 美元价格空间。详见 [STRATEGY.md](STRATEGY.md)。
 
 ## 辅助服务与历史代码
 
